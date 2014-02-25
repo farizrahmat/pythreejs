@@ -146,7 +146,7 @@ class TorusKnotGeometry(Geometry):
 class PolyhedronGeometry(Geometry):
     _view_name = Unicode('PolyhedronGeometryView', sync=True)
     radius = CFloat(1, sync=True)
-    detail = CInt(0, sync=True)
+    detail = Int(0, sync=True)
     vertices = List(List(CFloat), sync=True)
     faces = List(List(CInt), sync=True)
 
@@ -343,3 +343,43 @@ lights = {
         DirectionalLight(position=[-1,-1,-1], color=[.7,.7,.7]),
         ],
     }
+
+
+import contextlib
+class Connect(object):
+    """Connect traits from different objects together so they remain in sync.
+
+    Parameters
+    ----------
+    obj : pairs of objects/attributes
+
+    Examples
+    --------
+
+    >>> c = Connect((obj1, 'value'), (obj2, 'value'), (obj3, 'value'))
+    >>> obj1.value = 5 # updates other objects as well
+    """
+    updating = False
+    def __init__(self, *args):
+
+        self.objects = args
+        for obj,attr in args:
+            obj.on_trait_change(self._update, attr)
+
+    @contextlib.contextmanager
+    def _busy_updating(self):
+        self.updating = True
+        yield
+        self.updating = False
+
+    def _update(self, name, old, new):
+        if self.updating:
+            return
+        with self._busy_updating():
+            for obj,attr in self.objects:
+                setattr(obj, attr, new)
+
+    def disconnect(self):
+        for obj,attr in self.objects:
+            obj.on_trait_change(self._update, attr, remove=True)
+
