@@ -542,6 +542,27 @@ class SpotLight(PointLight):
     angle = CFloat(10, sync=True)
     exponent = CFloat(0.5, sync=True)
 
+def create_from_light(light):
+    l = light.scenetree_json()
+    return light_handler[l['light_type']](l)
+
+def json_ambient(t):
+    return AmbientLight(color=t['color'])
+    
+def json_directional(t):
+    return DirectionalLight(color=t['color'], intensity=t['intensity'])
+    
+def json_point(t):
+    return PointLight(color=t['color'], intensity=t['intensity'], distance=t['distance'])
+    
+def json_spot(t):
+    return SpotLight(color=t['color'], intensity=t['intensity'], distance=t['distance'])
+    
+light_handler = {'ambient': json_ambient,
+                 'directional': json_directional,
+                 'point': json_point,
+                 'spot': json_spot}
+
 lights = {
 <<<<<<< HEAD
     'colors': [
