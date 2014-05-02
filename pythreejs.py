@@ -1,6 +1,10 @@
 # Import the base Widget class and the traitlets Unicode class.
 from IPython.html.widgets.widget import Widget, DOMWidget
+<<<<<<< HEAD
 from IPython.utils.traitlets import (Unicode, Int, Instance, Enum, List, Float, 
+=======
+from IPython.utils.traitlets import (Unicode, Int, Instance, Enum, List, Dict, Float,
+>>>>>>> upstream/master
                                      Any, CFloat, Bool, This, CInt, TraitType)
 import numpy
 import math
@@ -20,8 +24,30 @@ class ImageTexture(Texture):
 
 class DataTexture(Texture):
     _view_name = Unicode('DataTextureView', sync=True)
+<<<<<<< HEAD
     data = Any(sync=True)
     format = Unicode('',sync=True)
+=======
+    data = List(CInt, sync=True)
+    format = Enum(['RGBAFormat', 'AlphaFormat', 'RGBFormat', 'LuminanceFormat', 'LuminanceAlphaFormat'],
+                'RGBAFormat', sync=True)
+    width = CInt(256, sync=True)
+    height = CInt(256, sync=True)
+    type = Enum(['UnsignedByteType', 'ByteType', 'ShortType', 'UnsignedShortType', 'IntType',
+                'UnsignedIntType', 'FloatType', 'UnsignedShort4444Type', 'UnsignedShort5551Type',
+                'UnsignedShort565Type'], 'UnsignedByteType', sync=True)
+    mapping = Enum(['UVMapping', 'CubeReflectionMapping', 'CubeRefractionMapping', 'SphericalReflectionMapping',
+                    'SphericalRefractionMapping'], 'UVMapping', sync=True)
+    wrapS = Enum(['ClampToEdgeWrapping', 'RepeatWrapping', 'MirroredRepeatWrapping'], 'ClampToEdgeWrapping',
+                sync=True)
+    wrapT = Enum(['ClampToEdgeWrapping', 'RepeatWrapping', 'MirroredRepeatWrapping'], 'ClampToEdgeWrapping',
+                sync=True)
+    magFilter = Enum(['LinearFilter', 'NearestFilter'], 'LinearFilter', sync=True)
+    minFilter = Enum(['NearestFilter', 'NearestMipMapNearestFilter', 'NearestMipMapLinearFilter',
+                        'LinearFilter', 'LinearMipMapNearestFilter'], 'NearestFilter', sync=True)
+    anisotropy = CInt(1, sync=True)
+
+>>>>>>> upstream/master
 
 # python 3 compatibility stuff
 # http://www.voidspace.org.uk/python/articles/porting-mock-to-python-3.shtml
@@ -69,12 +95,35 @@ class Object3d(Widget):
     # TODO: figure out how to get a list of instances of Object3d
     children = List(trait=None, default_value=[], allow_none=False, sync=True)
 
+class ScaledObject(Object3d):
+    """
+    This object's matrix will be scaled every time the camera is adjusted, so that the object is always the same
+    size in the viewport.
+
+    The idea is that it is the parent for objects you want to maintain the same scale.
+    """
+    _view_name = Unicode('ScaledObjectView', sync=True)
+
 class Controls(Widget):
     _view_name = Unicode('ControlsView', sync=True)
     controlling = Instance(Object3d, sync=True)
 
 class OrbitControls(Controls):
     _view_name = Unicode('OrbitControlsView', sync=True)
+
+class Picker(Controls):
+    _view_name  = Unicode('PickerView', sync=True)
+    event = Unicode('click', sync=True)
+    root = Instance(Object3d, sync=True)
+    picked = List(Dict, sync=True)
+    distance = CFloat(sync=True)
+    point = vector3(CFloat, sync=True)
+    object = Instance(Object3d, sync=True)
+    face = vector3(CInt, sync=True)
+    faceNormal = vector3(CFloat, sync=True)
+    faceVertices = List(vector3(), sync=True)
+    faceIndex = CInt(sync=True)
+    all = Bool(False, sync=True)
     
 class Geometry(Widget):
     _view_name = Unicode('GeometryView', sync=True)
@@ -88,7 +137,11 @@ class CylinderGeometry(Geometry):
     radiusTop = CFloat(1, sync=True)
     radiusBottom = CFloat(1, sync=True)
     height = CFloat(1, sync=True)
+<<<<<<< HEAD
     radiusSegments = CFloat(1, sync=True)
+=======
+    radiusSegments = CFloat(12, sync=True)
+>>>>>>> upstream/master
     heightSegments = CFloat(1, sync=True)
     openEnded = Bool(False, sync=True)
     
@@ -190,6 +243,7 @@ class FaceGeometry(Geometry):
     vertices = List(CFloat, sync=True) # [x0, y0, z0, x1, y1, z1, x2, y2, z2, ...]
     face3 = List(CInt, sync=True) # [v0,v1,v2, v0,v1,v2, v0,v1,v2, ...]
     face4 = List(CInt, sync=True) # [v0,v1,v2,v3, v0,v1,v2,v3, v0,v1,v2,v3, ...]
+    facen = List(List(CInt), sync=True) # [[v0,v1,v2,...,vn], [v0,v1,v2,...,vn], [v0,v1,v2,...,vn], ...]
 
 class ParametricGeometry(Geometry):
     _view_name = Unicode('ParametricGeometryView', sync=True)
@@ -201,6 +255,7 @@ class Material(Widget):
     _view_name = Unicode('MaterialView', sync=True)
     # id = TODO
     name = Unicode('', sync=True) 
+<<<<<<< HEAD
     side = Enum(['FrontSide', 'BackSide', 'DoubleSide'], 'FrontSide',  sync=True) 
     opacity = CFloat(1.0, sync=True)
     transparent = Bool(False, sync=True)
@@ -208,6 +263,18 @@ class Material(Widget):
     blendSrc = Enum(['ZeroFactor', 'OneFactor', 'SrcColorFactor', 'OneMinusSrcColorFactor', 'SrcAlphaFactor', 'OneMinusSrcAlphaFactor', 'DstAlphaFactor', 'OneMinusDstAlphaFactor'], 'SrcAlphaFactor', sync=True) 
     blendDst = Enum(['DstColorFactor', 'OneMinusDstColorFactor', 'SrcAlphaSaturateFactor'], 'OneMinusDstColorFactor', sync=True) # add to js side
     blendEquation = Enum(['AddEquation', 'SubtractEquation', 'ReverseSubtractEquation'], 'AddEquation', sync=True) # add to js side
+=======
+    side = Enum(['FrontSide', 'BackSide', 'DoubleSide'], 'DoubleSide',  sync=True) 
+    opacity = CFloat(1.0, sync=True)
+    transparent = Bool(False, sync=True)
+    blending = Enum(['NoBlending', 'NormalBlending', 'AdditiveBlending', 'SubtractiveBlending', 'MultiplyBlending',
+                    'CustomBlending'], 'NormalBlending', sync=True) 
+    blendSrc = Enum(['ZeroFactor', 'OneFactor', 'SrcColorFactor', 'OneMinusSrcColorFactor', 'SrcAlphaFactor',
+                    'OneMinusSrcAlphaFactor', 'DstAlphaFactor', 'OneMinusDstAlphaFactor'], 'SrcAlphaFactor', sync=True) 
+    blendDst = Enum(['DstColorFactor', 'OneMinusDstColorFactor', 'SrcAlphaSaturateFactor'], 'OneMinusDstColorFactor',
+                    sync=True)
+    blendEquation = Enum(['AddEquation', 'SubtractEquation', 'ReverseSubtractEquation'], 'AddEquation', sync=True)
+>>>>>>> upstream/master
     depthTest = Bool(True, sync=True) 
     depthWrite = Bool(True, sync=True) 
     polygonOffset = Bool(False, sync=True) 
@@ -307,6 +374,34 @@ class ShaderMaterial(Material):
     shading = Enum(['SmoothShading', 'FlatShading', 'NoShading'], 'SmoothShading', sync=True)
     linewidth = CFloat(1.0, sync=True)
     wireframeLinewidth = CFloat(1.0, sync=True)
+<<<<<<< HEAD
+=======
+
+class SpriteMaterial(Material):
+    _view_name = Unicode('SpriteMaterialView', sync=True)
+    map = Instance(Texture, sync=True)
+    uvScale = List(CFloat, sync=True)
+    sizeAttenuation = Bool(False, sync=True)
+    color = Color('white', sync=True)
+    uvOffset = List(CFloat, sync=True)
+    fog = Bool(False, sync=True)
+    useScreenCoordinates = Bool(False, sync=True)
+    scaleByViewport = Bool(False, sync=True)
+    alignment = List(CFloat, sync=True)
+
+class Sprite(Object3d):
+    _view_name = Unicode('SpriteView', sync=True)
+    material = Instance(Material, sync=True)
+    scaleToTexture = Bool(False, sync=True)
+
+class TextTexture(Texture):
+    _view_name = Unicode('TextTextureView', sync=True)
+    fontFace = Unicode('Arial', sync=True)
+    size = CInt(12, sync=True)
+    color = Color('black', sync=True)
+    string = Unicode('', sync=True)
+    squareTexture = Bool(True, sync=True)
+>>>>>>> upstream/master
 
 class Mesh(Object3d):
     _view_name = Unicode('MeshView', sync=True)
@@ -317,17 +412,50 @@ class PlotMesh(Mesh):
     plot = Instance('sage.plot.plot3d.base.Graphics3d')
 
     def _plot_changed(self, name, old, new):
-        self.geometry = self.geometry_from_plot(new)
-        self.material = self.material_from_plot(new)
+        self.type = new.scenetree_json()['type']
+        if (self.type == 'object'):
+            self.type = new.scenetree_json()['geometry']['type']
+            self.material = self.material_from_object(new)
+        else: 
+            self.type = new.scenetree_json()['children'][0]['geometry']['type']
+            self.material = self.material_from_other(new)
+        if(self.type == 'index_face_set'): 
+            self.geometry = self.geometry_from_plot(new)
+        elif(self.type == 'sphere'):
+            self.geometry = self.geometry_from_sphere(new)
+        elif(self.type == 'box'):
+            self.geometry = self.geometry_from_box(new)
+        
 
-    def material_from_plot(self, p):
+    def material_from_object(self, p):
         # TODO: do this without scenetree_json()
         t = p.texture.scenetree_json()
-        m = Material()
+        m = LambertMaterial(side='DoubleSide')
         m.color = t['color']
         m.opacity = t['opacity']
         # TODO: support other attributes
         return m
+
+    def material_from_other(self, p):
+        # TODO: do this without scenetree_json()
+        t = p.scenetree_json()['children'][0]['texture']
+        m = LambertMaterial(side='DoubleSide')
+        m.color = t['color']
+        m.opacity = t['opacity']
+        # TODO: support other attributes
+        return m
+
+    def geometry_from_box(self, p):
+        g = BoxGeometry()
+        g.width = p.scenetree_json()['geometry']['size'][0]
+        g.height = p.scenetree_json()['geometry']['size'][1]
+        g.depth = p.scenetree_json()['geometry']['size'][2]
+        return g
+
+    def geometry_from_sphere(self, p):
+        g = SphereGeometry()
+        g.radius = p.scenetree_json()['children'][0]['geometry']['radius']
+        return g
 
     def geometry_from_plot(self, p):
         from itertools import groupby, chain
@@ -366,6 +494,12 @@ class OrthographicCamera(Camera):
 class Scene(Object3d):
     _view_name = Unicode('SceneView', sync=True)
     
+class Effect(Widget):
+    pass
+
+class AnaglyphEffect(Effect):
+    _view_name = Unicode('AnaglyphEffectView', sync=True)
+
 class Renderer(DOMWidget):
     _view_name = Unicode('RendererView', sync=True)
     width = CInt(600, sync=True)
@@ -373,8 +507,15 @@ class Renderer(DOMWidget):
     renderer_type = Enum(['webgl', 'canvas', 'auto'], 'auto', sync=True)
     scene = Instance(Scene, sync=True)
     camera = Instance(Camera, sync=True)
+<<<<<<< HEAD
     controls = Instance(Controls, sync=True)
     
+=======
+    controls = List(Instance(Controls), sync=True)
+    effect = Instance(Effect, sync=True)
+    color = Color('black', sync=True)
+
+>>>>>>> upstream/master
 class Light(Object3d):
     color = Color('white', sync=True) # could be string or number or tuple
 
@@ -400,9 +541,9 @@ class SpotLight(PointLight):
     _view_name = Unicode('SpotLight', sync=True)
     angle = CFloat(10, sync=True)
     exponent = CFloat(0.5, sync=True)
-    
 
 lights = {
+<<<<<<< HEAD
     'colors': [
         AmbientLight(color=(0.312,0.188,0.4)),
         DirectionalLight(position=[1,0,1], color=[0.8, 0, 0]),
@@ -418,3 +559,98 @@ lights = {
         DirectionalLight(position=[-1,-1,-1], color=[.7,.7,.7]),
         ],
     }
+=======
+'colors': [
+    AmbientLight(color=(0.312,0.188,0.4)),
+    DirectionalLight(position=[1,0,1], color=[0.8, 0, 0]),
+    DirectionalLight(position=[1,1,1], color=[0, 0.8, 0]),
+    DirectionalLight(position=[0,1,1], color=[0, 0, 0.8]),
+    DirectionalLight(position=[-1,-1,-1], color=[.9,.7,.9]),
+    ],
+'shades': [
+    AmbientLight(color=[.6, .6, .6]),
+    DirectionalLight(position=[0,1,1], color=[.5, .5, .5]),
+    DirectionalLight(position=[0,0,1], color=[.5, .5, .5]),
+    DirectionalLight(position=[1,1,1], color=[.5, .5, .5]),
+    DirectionalLight(position=[-1,-1,-1], color=[.7,.7,.7]),
+    ],
+}
+
+
+# TODO material type option
+
+def create_from_plot(plot):
+    tree = plot.scenetree_json()
+    obj = sage_handlers[tree['type']](tree)
+    cam = PerspectiveCamera(position=[5,5,5], fov=40, up=[0,0,1],
+           children=[DirectionalLight(color=0xffffff, position=[3,5,1], intensity=0.5)])
+    scene = Scene(children=[obj, AmbientLight(color=0x777777)])
+    renderer = Renderer(camera=cam, scene=scene, controls=OrbitControls(controlling=cam))
+    return renderer
+
+def json_object(t):
+    m = sage_handlers['texture'](t['texture'])
+    g = sage_handlers[t['geometry']['type']](t['geometry'])
+    mesh = Mesh(geometry=g, material=m)
+    if t.get('mesh',False) is True:
+        wireframe_material = BasicMaterial(color=0x222222, transparent=True, opacity=0.2, wireframe=True)
+        mesh = Object3d(children=[mesh, Mesh(geometry=g, material=wireframe_material)])
+    return mesh
+
+def json_group(t):
+    m = t.get('matrix', [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1])
+    # take the transpose of m -- is this working?
+    m[1], m[2], m[3], m[4], m[6], m[7], m[8], m[9],m[11],m[12],m[13],m[14] = \
+    m[4], m[8],m[12], m[1], m[9],m[13], m[2], m[6],m[14], m[3], m[7],m[11]
+    children = [sage_handlers[c['type']](c) for c in t['children']]
+    return Object3d(matrix=m, children=children)
+
+def json_texture(t):
+    return PhongMaterial(side='DoubleSide',
+                         color = t['color'],
+                         opacity = t['opacity'],
+                         transparent = t['opacity'] < 1,
+                         overdraw=True,
+                         polygonOffset=True,
+                         polygonOffsetFactor=1,
+                         polygonOffsetUnits=1)
+
+def json_box(t):
+    return BoxGeometry(width=t['size'][0], 
+                        height=t['size'][1], 
+                        depth=t['size'][2])
+
+def json_index_face_set(t):
+    from itertools import chain
+    def flatten(ll):
+        return list(chain.from_iterable(ll))
+    return FaceGeometry(vertices = flatten(t['vertices']),
+                         face3 = flatten(t['face3']),
+                         face4 = flatten(t['face4']),
+                         facen = t['facen'])
+
+
+def json_cone(t):
+    return CylinderGeometry(radiusTop=0,
+                             radiusBottom=t['bottomradius'],
+                             height=t['height'])
+
+def json_cylinder(t):
+    return CylinderGeometry(radiusTop=t['radius'],
+                             radiusBottom=t['radius'],
+                             height=t['height'])
+
+def json_sphere(t):
+    return SphereGeometry(radius=t['radius'])
+
+# TODO text, point, line, viewpoint?
+sage_handlers = {'object' : json_object,
+             'group' : json_group,
+             'box' : json_box,
+             'sphere' : json_sphere,
+             'index_face_set' : json_index_face_set,
+             'cone' : json_cone,
+             'cylinder' : json_cylinder,
+             'texture' : json_texture
+            }
+>>>>>>> upstream/master
