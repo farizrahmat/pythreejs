@@ -520,6 +520,27 @@ class SpotLight(PointLight):
     angle = CFloat(10, sync=True)
     exponent = CFloat(0.5, sync=True)
 
+def create_from_light(light):
+    l = light.scenetree_json()
+    return light_handler[l['light_type']](l)
+
+def json_ambient(t):
+    return AmbientLight(color=t['color'])
+    
+def json_directional(t):
+    return DirectionalLight(color=t['color'], intensity=t['intensity'])
+    
+def json_point(t):
+    return PointLight(color=t['color'], intensity=t['intensity'], distance=t['distance'])
+    
+def json_spot(t):
+    return SpotLight(color=t['color'], intensity=t['intensity'], distance=t['distance'])
+    
+light_handler = {'ambient': json_ambient,
+                 'directional': json_directional,
+                 'point': json_point,
+                 'spot': json_spot}
+
 lights = {
 'colors': [
     AmbientLight(color=(0.312,0.188,0.4)),
@@ -591,8 +612,8 @@ def create_from_plot(plot):
     tree = plot.scenetree_json()
     obj = sage_handlers[tree['type']](tree)
     cam = PerspectiveCamera(position=[10,10,10], fov=40, up=[0,0,1],
-           children=[DirectionalLight(color=0xffffff, position=[3,5,1], intensity=0.5)])
-    scene = Scene(children=[obj, AmbientLight(color=0x777777)])
+           children=[create_from_light(light.DirectionalLight(color='white', position=[3,5,1], intensity=0.5))])
+    scene = Scene(children=[obj, create_from_light(light.AmbientLight('gray'))])
     renderer = Renderer(camera=cam, scene=scene, controls=[OrbitControls(controlling=cam)], color='white')
     return renderer
 
