@@ -613,7 +613,7 @@ def create_from_plot(plot):
     obj = sage_handlers[tree['type']](tree)
     cam = PerspectiveCamera(position=[10,10,10], fov=40, up=[0,0,1],
            children=[create_from_light(light.DirectionalLight(color='white', position=[3,5,1], intensity=0.5))])
-    scene = Scene(children=[obj, create_from_light(light.AmbientLight('gray'))])
+    scene = Scene(children=[obj, create_from_light(light.AmbientLight(color='gray'))])
     renderer = Renderer(camera=cam, scene=scene, controls=[OrbitControls(controlling=cam)], color='white')
     return renderer
 
