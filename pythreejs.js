@@ -341,9 +341,7 @@ require(["threejs-all"], function() {
                 var vector = new THREE.Vector3(mouseX, mouseY, that.options.renderer.camera.obj.near);
 
                 var projector = new THREE.Projector();
-                projector.unprojectVector(vector, that.options.renderer.camera.obj);
-                var ray = vector.sub(that.options.renderer.camera.obj.position).normalize();
-                that.obj = new THREE.Raycaster(that.options.renderer.camera.obj.position, ray);
+                that.obj = projector.pickingRay(vector, that.options.renderer.camera.obj);
                 var root = that.options.renderer.scene.obj;
                 if (that.model.get('root')) {
                     var r = _.find(that.model.get('root').views, function(o) {
